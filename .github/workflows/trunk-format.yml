@@ -1,4 +1,4 @@
-name: Format code
+name: Format and Lint
 
 on:
   push:
@@ -11,10 +11,12 @@ on:
       - "**.js"
       - "**.mjs"
       - "**.cs"
+      - "**.rs"
+      - "Cargo*"
       - ".github/workflows/**.yml"
 
 jobs:
-  format:
+  format-and-lint:
     runs-on: ubuntu-latest
 
     permissions:
@@ -30,6 +32,17 @@ jobs:
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v4
 
+      - name: Cache Rust dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
       - uses: rrbutani/use-nix-shell-action@v1
         with:
           devShell: .#ci-format
@@ -37,10 +50,8 @@ jobs:
       - name: Format project source code
         run: nix fmt
 
-      - uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features
+      - name: Run Clippy
+        run: nix develop .#ci-format --command cargo clippy --all-features -- -D warnings
 
       - name: Commit formatting changes
         uses: stefanzweifel/git-auto-commit-action@v5
