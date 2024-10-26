@@ -32,6 +32,7 @@ fn main() -> Result<()> {
         ));
     }
 
+    #[allow(unused_mut)]
     let mut monitor = udev_power_monitor::UdevPowerMonitor::new(&mut manager);
     monitor.start()
 }

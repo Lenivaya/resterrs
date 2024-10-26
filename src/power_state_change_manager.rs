@@ -8,6 +8,12 @@ pub struct PowerStateChangeManager {
     handlers: Vec<Rc<RefCell<Box<dyn PowerStateChangeHandler>>>>,
 }
 
+impl Default for PowerStateChangeManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PowerStateChangeManager {
     pub fn new() -> Self {
         Self {

@@ -20,7 +20,7 @@ impl<'a> UdevPowerMonitor<'a> {
     }
 
     pub fn start(&mut self) -> Result<()> {
-        let mut monitor = MonitorBuilder::new()
+        let monitor = MonitorBuilder::new()
             .context("Failed to create udev monitor builder")?
             .match_subsystem_devtype("power_supply", "power_supply")
             .context("Failed to match subsystem and devtype")?
