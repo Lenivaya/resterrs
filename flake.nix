@@ -1,5 +1,7 @@
 {
   inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
     naersk.url = "github:nix-community/naersk";
     naersk.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -34,7 +36,7 @@
           ...
         }:
         let
-          naersk' = pkgs.callPackage naerk { };
+          naersk' = pkgs.callPackage naersk { };
           inherit (gitignore.lib) gitignoreSource;
           src = gitignoreSource ./.;
         in
@@ -45,23 +47,22 @@
 
           packages.resterrs = naersk'.buildPackage {
             inherit src;
-            buildInputs = with pkgs; [ ] lib.optional stdenv.isDarwin libiconv;
+            buildInputs = with pkgs; [
+              pkg-config
+              systemd
+            ];
           };
           packages.default = self'.packages.resterrs;
 
           devShells =
             let
-              bareMinimum =
-                with pkgs;
-                [
-                  rustc
-                  cargo
+              bareMinimum = with pkgs; [
+                rustc
+                cargo
 
-                  #                  libudev-zero
-                  systemd
-                  pkg-config
-                ]
-                ++ lib.optional stdenv.isDarwin libiconv;
+                systemd
+                pkg-config
+              ];
             in
             {
               default = pkgs.mkShell {
