@@ -1,6 +1,6 @@
 [Unit]
 Description=Resterrs Service Manager
-After=network.target
+After=default.target
 
 [Service]
 ExecStart=target/debug/resterrs
