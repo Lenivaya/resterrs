@@ -1,0 +1,11 @@
+[Unit]
+Description=Resterrs Service Manager
+After=network.target
+
+[Service]
+ExecStart=target/debug/resterrs
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

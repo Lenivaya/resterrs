@@ -1,0 +1,17 @@
+[package]
+name = "resterrs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+udev = { version = "0.9.0", features = ["hwdb"] }
+anyhow = "1.0.86"
+toml = "0.8.19"
+serde = { version = "1.0.204", features = ["derive"] }
+dirs = "5.0.1"
+lazy_static = "1.5.0"
+log = "0.4.22"
+env_logger = "0.11.5"
+clap = { version = "4.5", features = ["derive", "unicode", "wrap_help"] }
+sysinfo = "0.32.0"
+which = "6.0.3"
