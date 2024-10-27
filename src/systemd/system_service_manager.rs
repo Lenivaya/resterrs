@@ -3,7 +3,7 @@ use log::info;
 use std::io;
 use std::process::{Command, Stdio};
 
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct SystemdServiceManager {
     pub user: Option<String>,
 }

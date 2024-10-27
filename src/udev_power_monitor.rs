@@ -1,25 +1,25 @@
 use crate::common::PowerState;
 use crate::power_state_change_manager::PowerStateChangeManager;
-use crate::traits::power_state_change_handler::PowerStateChangeHandler;
 use anyhow::{Context, Result};
 use log::info;
 use mio::{Events, Interest, Poll, Token};
+use std::time::Duration;
 use udev::MonitorBuilder;
 
 const UDEV: Token = Token(0);
 
-pub struct UdevPowerMonitor<'a> {
-    power_state_change_manager: &'a mut PowerStateChangeManager,
+pub struct UdevPowerMonitor {
+    power_state_change_manager: PowerStateChangeManager,
 }
 
-impl<'a> UdevPowerMonitor<'a> {
-    pub fn new(power_state_change_manager: &'a mut PowerStateChangeManager) -> Self {
+impl UdevPowerMonitor {
+    pub fn new(power_state_change_manager: PowerStateChangeManager) -> Self {
         UdevPowerMonitor {
             power_state_change_manager,
         }
     }
 
-    pub fn start(&mut self) -> Result<()> {
+    pub fn start(&self) -> Result<()> {
         let mut socket = MonitorBuilder::new()
             .context("Failed to create udev monitor builder")?
             .match_subsystem_devtype("power_supply", "power_supply")
@@ -36,29 +36,26 @@ impl<'a> UdevPowerMonitor<'a> {
         info!("Listening for power supply udev events...");
 
         loop {
-            poll.poll(&mut events, None)?;
+            poll.poll(&mut events, Some(Duration::from_secs(1)))?;
 
             for event in events.iter() {
-                match event.token() {
-                    UDEV => {
-                        if let Some(udev_event) = socket.iter().next() {
-                            self.handle_event(&udev_event);
-                        }
+                if let UDEV = event.token() {
+                    if let Some(udev_event) = socket.iter().next() {
+                        self.handle_event(&udev_event);
                     }
-                    _ => {}
                 }
             }
         }
     }
 
-    pub fn handle_event(&mut self, event: &udev::Event) {
+    fn handle_event(&self, event: &udev::Event) {
         let power_state = PowerState::from(event.attribute_value("online"));
         match power_state {
             PowerState::Plugged => info!("Power plugged in!"),
             PowerState::Unplugged => info!("Power unplugged!"),
         }
-        self.power_state_change_manager
-            .handle(&power_state)
-            .expect("Failed to handle power state change");
+        if let Err(e) = self.power_state_change_manager.handle(power_state) {
+            eprintln!("Error handling power state change: {:?}", e);
+        }
     }
 }

@@ -1,6 +1,7 @@
 use crate::common::PowerState::{Plugged, Unplugged};
 use std::ffi::OsStr;
 
+#[derive(Clone)]
 pub enum PowerState {
     Plugged,
     Unplugged,

@@ -1,11 +1,11 @@
-use crate::common;
+use crate::common::PowerState;
 use crate::traits::power_state_change_handler::PowerStateChangeHandler;
 use anyhow::Result;
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::sync::Arc;
+use std::thread;
 
 pub struct PowerStateChangeManager {
-    handlers: Vec<Rc<RefCell<Box<dyn PowerStateChangeHandler>>>>,
+    handlers: Vec<Arc<dyn PowerStateChangeHandler + Send + Sync>>,
 }
 
 impl Default for PowerStateChangeManager {
@@ -21,19 +21,23 @@ impl PowerStateChangeManager {
         }
     }
 
-    pub fn add_handler(&mut self, handler: Box<dyn PowerStateChangeHandler>) -> &mut Self {
-        self.handlers.push(Rc::new(RefCell::new(handler)));
+    pub fn add_handler(
+        &mut self,
+        handler: Arc<dyn PowerStateChangeHandler + Send + Sync>,
+    ) -> &mut Self {
+        self.handlers.push(handler);
         self
     }
-}
 
-impl PowerStateChangeHandler for PowerStateChangeManager {
-    fn handle(&mut self, power_state: &common::PowerState) -> Result<()> {
-        for handler in &self.handlers {
-            handler
-                .borrow_mut()
-                .handle(power_state)
-                .expect("Failed to handle power state change");
+    pub fn handle(&self, power_state: PowerState) -> Result<()> {
+        for handler in self.handlers.iter() {
+            let handler = Arc::clone(handler);
+            let power_state = power_state.clone();
+            thread::spawn(move || {
+                if let Err(e) = handler.handle(&power_state) {
+                    eprintln!("Error handling power state change: {:?}", e);
+                }
+            });
         }
 
         Ok(())

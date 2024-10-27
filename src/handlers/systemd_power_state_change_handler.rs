@@ -2,16 +2,17 @@ use crate::common::PowerState;
 use crate::traits::power_state_change_handler::PowerStateChangeHandler;
 use crate::traits::service_manager::{ServiceManager, ServiceStartCtx, ServiceStopCtx};
 use anyhow::Result;
-// use service_manager::ServiceManager;
-// use service_manager::*;
 
 pub struct SystemdPowerStateChangeHandler {
     services: Vec<String>,
-    service_manager: Box<dyn ServiceManager>,
+    service_manager: Box<dyn ServiceManager + Send + Sync>,
 }
 
 impl SystemdPowerStateChangeHandler {
-    pub fn new(services: Vec<String>, service_manager: Box<dyn ServiceManager>) -> Self {
+    pub fn new(
+        services: Vec<String>,
+        service_manager: Box<dyn ServiceManager + Send + Sync>,
+    ) -> Self {
         Self {
             services,
             service_manager,
@@ -35,17 +36,6 @@ impl SystemdPowerStateChangeHandler {
                 .unwrap_or_else(|e| {
                     log::error!("Could not start service: {}", e);
                 })
-            // self.service_manager
-            //     .start(ServiceStartCtx {
-            //         label: ServiceLabel {
-            //             application: service.clone(),
-            //             qualifier: None,
-            //             organization: None,
-            //         },
-            //     })
-            //     .unwrap_or_else(|e| {
-            //         log::error!("Could not start service: {}", e);
-            //     })
         }
     }
 
@@ -59,23 +49,12 @@ impl SystemdPowerStateChangeHandler {
                 .unwrap_or_else(|e| {
                     log::error!("Could not stop service: {}", e);
                 })
-            // self.service_manager
-            //     .stop(ServiceStopCtx {
-            //         label: ServiceLabel {
-            //             application: service.clone(),
-            //             qualifier: None,
-            //             organization: None,
-            //         },
-            //     })
-            //     .unwrap_or_else(|e| {
-            //         log::error!("Could not stop service: {}", e);
-            //     })
         }
     }
 }
 
 impl PowerStateChangeHandler for SystemdPowerStateChangeHandler {
-    fn handle(&mut self, power_state: &PowerState) -> Result<()> {
+    fn handle(&self, power_state: &PowerState) -> Result<()> {
         match power_state {
             PowerState::Plugged => self.start_services(),
             PowerState::Unplugged => self.stop_services(),

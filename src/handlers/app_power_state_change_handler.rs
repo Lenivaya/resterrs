@@ -1,12 +1,12 @@
 use crate::common::PowerState;
 use crate::traits::power_state_change_handler::PowerStateChangeHandler;
 use anyhow::Result;
-use log::{error, info};
-use sysinfo::{ProcessRefreshKind, RefreshKind, System, UpdateKind};
+use std::sync::{Arc, Mutex};
+use sysinfo::{Process, ProcessRefreshKind, RefreshKind, System, UpdateKind};
 
 pub struct AppPowerStateChangeHandler {
     managed_apps: Vec<String>,
-    system: System,
+    system: Arc<Mutex<System>>,
 }
 
 impl AppPowerStateChangeHandler {
@@ -16,34 +16,36 @@ impl AppPowerStateChangeHandler {
                 .into_iter()
                 .map(|app| app.to_lowercase())
                 .collect(),
-            system: System::new_with_specifics(
+            system: Arc::new(Mutex::new(System::new_with_specifics(
                 RefreshKind::new().with_processes(
                     ProcessRefreshKind::new()
                         .with_cmd(UpdateKind::Always)
                         .with_exe(UpdateKind::Always),
                 ),
-            ),
+            ))),
         }
     }
 
-    fn stop_apps(&mut self) {
-        self.system.refresh_all();
+    fn stop_apps(&self) {
+        self.system.lock().unwrap().refresh_all();
 
         for app in &self.managed_apps {
-            info!("Stopping app: {}", app);
+            log::info!("Stopping app: {}", app);
             self.system
+                .lock()
+                .expect("Failed to lock system when fetching processes for stopping app")
                 .processes()
                 .iter()
                 .filter(|(_, process)| self.should_stop_process(process, app))
                 .for_each(|(pid, process)| {
                     if !process.kill() {
-                        error!("Failed to stop app {:?} (PID: {:?}", process.name(), pid);
+                        log::error!("Failed to stop app {:?} (PID: {:?}", process.name(), pid);
                     }
                 });
         }
     }
 
-    fn should_stop_process(&self, process: &sysinfo::Process, app: &str) -> bool {
+    fn should_stop_process(&self, process: &Process, app: &str) -> bool {
         let process_name = process
             .name()
             .to_ascii_lowercase()
@@ -60,7 +62,7 @@ impl AppPowerStateChangeHandler {
 }
 
 impl PowerStateChangeHandler for AppPowerStateChangeHandler {
-    fn handle(&mut self, power_state: &PowerState) -> Result<()> {
+    fn handle(&self, power_state: &PowerState) -> Result<()> {
         match power_state {
             PowerState::Unplugged => self.stop_apps(),
             PowerState::Plugged => {} // Do nothing when plugged in
