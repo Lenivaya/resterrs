@@ -1,6 +1,6 @@
 use crate::common::PowerState;
 use anyhow::Result;
 
-pub trait PowerStateChangeHandler {
-    fn handle(&mut self, power_state: &PowerState) -> Result<()>;
+pub trait PowerStateChangeHandler: Send + Sync {
+    fn handle(&self, power_state: &PowerState) -> Result<()>;
 }

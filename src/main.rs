@@ -6,6 +6,7 @@ use resterrs::handlers::{app_power_state_change_handler, systemd_power_state_cha
 use resterrs::power_state_change_manager::PowerStateChangeManager;
 use resterrs::systemd::system_service_manager::SystemdServiceManager;
 use resterrs::{cli, udev_power_monitor};
+use std::sync::Arc;
 
 fn main() -> Result<()> {
     env_logger::init();
@@ -14,17 +15,17 @@ fn main() -> Result<()> {
 
     let mut manager = PowerStateChangeManager::new();
     manager
-        .add_handler(Box::new(
+        .add_handler(Arc::new(
             app_power_state_change_handler::AppPowerStateChangeHandler::new(config.apps_to_stop),
         ))
-        .add_handler(Box::new(
+        .add_handler(Arc::new(
             systemd_power_state_change_handler::SystemdPowerStateChangeHandler::new(
                 config.system_services_to_stop,
                 Box::new(SystemdServiceManager::system()),
             ),
         ));
     if let Some(username) = config.username {
-        manager.add_handler(Box::new(
+        manager.add_handler(Arc::new(
             systemd_power_state_change_handler::SystemdPowerStateChangeHandler::new(
                 config.user_services_to_stop,
                 Box::new(SystemdServiceManager::user(username)),
@@ -32,7 +33,6 @@ fn main() -> Result<()> {
         ));
     }
 
-    #[allow(unused_mut)]
-    let mut monitor = udev_power_monitor::UdevPowerMonitor::new(&mut manager);
+    let monitor = udev_power_monitor::UdevPowerMonitor::new(manager);
     monitor.start()
 }
