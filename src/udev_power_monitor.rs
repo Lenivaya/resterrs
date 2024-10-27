@@ -1,12 +1,12 @@
-use std::thread;
-use std::time::Duration;
-
 use crate::common::PowerState;
 use crate::power_state_change_manager::PowerStateChangeManager;
 use crate::traits::power_state_change_handler::PowerStateChangeHandler;
 use anyhow::{Context, Result};
 use log::info;
+use mio::{Events, Interest, Poll, Token};
 use udev::MonitorBuilder;
+
+const UDEV: Token = Token(0);
 
 pub struct UdevPowerMonitor<'a> {
     power_state_change_manager: &'a mut PowerStateChangeManager,
@@ -20,22 +20,34 @@ impl<'a> UdevPowerMonitor<'a> {
     }
 
     pub fn start(&mut self) -> Result<()> {
-        let monitor = MonitorBuilder::new()
+        let mut socket = MonitorBuilder::new()
             .context("Failed to create udev monitor builder")?
             .match_subsystem_devtype("power_supply", "power_supply")
             .context("Failed to match subsystem and devtype")?
             .listen()
             .context("Failed to listen for udev events")?;
 
+        let mut poll = Poll::new()?;
+        let mut events = Events::with_capacity(1);
+
+        poll.registry()
+            .register(&mut socket, UDEV, Interest::READABLE)?;
+
         info!("Listening for power supply udev events...");
 
         loop {
-            let events: Vec<_> = monitor.iter().collect();
-            if let Some(event) = events.last() {
-                self.handle_event(event);
-            }
+            poll.poll(&mut events, None)?;
 
-            thread::sleep(Duration::from_secs(1));
+            for event in events.iter() {
+                match event.token() {
+                    UDEV => {
+                        if let Some(udev_event) = socket.iter().next() {
+                            self.handle_event(&udev_event);
+                        }
+                    }
+                    _ => {}
+                }
+            }
         }
     }
 
