@@ -32,21 +32,21 @@ impl AppPowerStateChangeHandler {
     fn stop_apps(&self) {
         self.system.lock().unwrap().refresh_all();
 
-        for app in &self.managed_apps {
-            log::info!("Stopping app: {}", app);
-
-            self.system
-                .lock()
-                .expect("Failed to lock system when fetching processes for stopping app")
-                .processes()
-                .iter()
-                .filter(|(_, process)| self.should_stop_process(process, app))
-                .for_each(|(pid, process)| {
-                    if !process.kill() {
-                        log::error!("Failed to stop app {:?} (PID: {:?}", process.name(), pid);
-                    }
-                });
-        }
+        self.system
+            .lock()
+            .expect("Failed to lock system when fetching processes for stopping app")
+            .processes()
+            .iter()
+            .filter(|(_, process)| {
+                self.managed_apps
+                    .iter()
+                    .any(|app| self.should_stop_process(process, app))
+            })
+            .for_each(|(pid, process)| {
+                if !process.kill() {
+                    log::error!("Failed to stop app {:?} (PID: {:?}", process.name(), pid);
+                }
+            });
     }
 
     fn should_stop_process(&self, process: &Process, app: &str) -> bool {
