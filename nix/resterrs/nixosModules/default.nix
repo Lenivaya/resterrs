@@ -28,6 +28,12 @@ in
         system_services_to_stop = ["bpftune", "syncthing", "fwupd"]
         user_services_to_stop = ["kdeconnect", "picom"]
         apps_to_stop = ["telegram-desktop", "vesktop"]
+        commands_unplugged = [
+          "bluetoothctl power off"
+        ]
+        commands_plugged = [
+          "bluetoothctl power on"
+        ]
         username = "leniviy"
       '';
       description = "TOML configuration for Resterrs. See the Resterrs documentation for available options.";
