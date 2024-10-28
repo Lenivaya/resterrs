@@ -12,7 +12,7 @@ const UDEV: Token = Token(0);
 
 pub struct UdevPowerMonitor {
     power_state_change_manager: PowerStateChangeManager,
-    power_state_tracker: Mutex<PowerStateTracker>,
+    pub power_state_tracker: Mutex<PowerStateTracker>,
 }
 
 impl UdevPowerMonitor {
