@@ -1,7 +1,10 @@
 use crate::common::PowerState;
 use crate::traits::power_state_change_handler::PowerStateChangeHandler;
 use anyhow::Result;
-use std::sync::{Arc, Mutex};
+use std::{
+    ffi::OsStr,
+    sync::{Arc, Mutex},
+};
 use sysinfo::{Process, ProcessRefreshKind, RefreshKind, System, UpdateKind};
 
 pub struct AppPowerStateChangeHandler {
@@ -31,6 +34,7 @@ impl AppPowerStateChangeHandler {
 
         for app in &self.managed_apps {
             log::info!("Stopping app: {}", app);
+
             self.system
                 .lock()
                 .expect("Failed to lock system when fetching processes for stopping app")
@@ -53,9 +57,9 @@ impl AppPowerStateChangeHandler {
             .to_ascii_lowercase();
         let process_cmd = process
             .cmd()
-            .first()
-            .map(|cmd| cmd.to_string_lossy().to_ascii_lowercase())
-            .unwrap_or_default();
+            .join(OsStr::new(" "))
+            .to_string_lossy()
+            .to_ascii_lowercase();
 
         process_name.contains(app) || process_cmd.contains(app)
     }
