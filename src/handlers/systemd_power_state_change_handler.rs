@@ -19,13 +19,6 @@ impl SystemdPowerStateChangeHandler {
         }
     }
 
-    pub fn handle_udev_event(&self, power_state: &PowerState) {
-        match power_state {
-            PowerState::Plugged => self.start_services(),
-            PowerState::Unplugged => self.stop_services(),
-        }
-    }
-
     pub fn start_services(&self) {
         for service in &self.services {
             log::info!("Starting service: {}", service);

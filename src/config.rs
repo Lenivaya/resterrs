@@ -36,6 +36,12 @@ pub struct Config {
     /// Username to use when running commands
     /// for user units
     pub username: Option<String>,
+
+    /// Commands to run when device is unplugged
+    pub commands_unplugged: Option<Vec<String>>,
+
+    /// Commands to run when device is plugged in
+    pub commands_plugged: Option<Vec<String>>,
 }
 
 impl Config {

@@ -13,8 +13,8 @@ impl SystemdServiceManager {
         Self::default()
     }
 
-    pub fn user(user: String) -> Self {
-        Self { user: Some(user) }
+    pub fn user(user: Option<String>) -> Self {
+        Self { user }
     }
 
     pub fn into_system(self) -> Self {

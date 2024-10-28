@@ -2,9 +2,12 @@ use anyhow::Result;
 use clap::Parser;
 use cli::Arguments;
 use resterrs::config::Config;
-use resterrs::handlers::{app_power_state_change_handler, systemd_power_state_change_handler};
+use resterrs::handlers::{
+    app_power_state_change_handler, commands_power_state_change_handler,
+    systemd_power_state_change_handler,
+};
 use resterrs::power_state_change_manager::PowerStateChangeManager;
-use resterrs::systemd::system_service_manager::SystemdServiceManager;
+use resterrs::systemd::systemd_service_manager::SystemdServiceManager;
 use resterrs::{cli, udev_power_monitor};
 use std::sync::Arc;
 
@@ -23,15 +26,19 @@ fn main() -> Result<()> {
                 config.system_services_to_stop,
                 Box::new(SystemdServiceManager::system()),
             ),
-        ));
-    if let Some(username) = config.username {
-        manager.add_handler(Arc::new(
+        ))
+        .add_handler(Arc::new(
             systemd_power_state_change_handler::SystemdPowerStateChangeHandler::new(
                 config.user_services_to_stop,
-                Box::new(SystemdServiceManager::user(username)),
+                Box::new(SystemdServiceManager::user(config.username)),
+            ),
+        ))
+        .add_handler(Arc::new(
+            commands_power_state_change_handler::CommandsPowerStateChangeHandler::new(
+                config.commands_unplugged,
+                config.commands_plugged,
             ),
         ));
-    }
 
     let monitor = udev_power_monitor::UdevPowerMonitor::new(manager);
     monitor.start()
