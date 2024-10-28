@@ -1,6 +1,6 @@
 use crate::common::PowerState;
 use crate::traits::power_state_change_handler::PowerStateChangeHandler;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use run_script::run_script;
 
 #[derive(Debug, Clone, Default)]
@@ -24,7 +24,11 @@ impl CommandsPowerStateChangeHandler {
         if let Some(commands) = commands {
             for command in commands {
                 log::info!("Running command: {}", command);
-                run_script!(command).expect(format!("Could not run command: {}", command).as_str());
+                if let Err(e) = run_script!(command)
+                    .with_context(|| format!("Failed to run command: {}", command))
+                {
+                    log::error!("{}", e);
+                }
             }
         }
         Ok(())
