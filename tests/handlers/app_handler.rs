@@ -1,5 +1,5 @@
 use anyhow::Result;
-use test_log::test;
+use tracing_test::traced_test;
 
 use resterrs::common::PowerState;
 use resterrs::handlers::app_power_state_change_handler::AppPowerStateChangeHandler;
@@ -11,6 +11,7 @@ use std::time::Duration;
 const TEST_TIMEOUT: Duration = Duration::from_secs(5);
 
 #[test]
+#[traced_test]
 fn test_app_handler_unplugged_kills_matching_process() -> Result<()> {
     let mut test_process = TestProcess::new();
     let process_name = test_process.name.clone();
@@ -32,6 +33,7 @@ fn test_app_handler_unplugged_kills_matching_process() -> Result<()> {
 }
 
 #[test]
+#[traced_test]
 fn test_app_handler_unplugged_ignores_non_matching_process() -> Result<()> {
     let mut test_process = TestProcess::new();
     let process_name = test_process.name.clone();
@@ -57,6 +59,7 @@ fn test_app_handler_unplugged_ignores_non_matching_process() -> Result<()> {
 }
 
 #[test]
+#[traced_test]
 fn test_app_handler_plugged_preserves_processes() -> Result<()> {
     let mut test_process = TestProcess::new();
     let process_name = test_process.name.clone();

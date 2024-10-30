@@ -4,16 +4,17 @@
 <div align="center">
 
 ![CI](https://github.com/Lenivaya/qrrs/workflows/CI/badge.svg)
-[![License: MIT](https://img.shields.io/github/license/lenivaya/resterrs)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+<a href="https://crates.io/crates/qrrs"><img src="https://img.shields.io/crates/v/qrrs.svg?colorB=319e8c" alt="Version info"></a><br>
 
-![monkey sleeping](https://github.com/user-attachments/assets/1fd2f02b-a229-48f1-9827-2a389b9c1ef5)
+![monkey sleeping](https://github.com/user-attachments/assets/0c984728-94f4-481a-832d-68514cf530d1)
 
 </div>
 
 <details>
 <summary>Table of contents</summary>
 
-- [Use cases](#use-cases)
+- [Use cases][#use-cases]
 - [Features](#features)
 - [Usage](#usage)
 - [Configuration](#configuration)
@@ -25,9 +26,9 @@
 
 **_A good [config example](#configuration-example) is worth a thousand of words._**
 
-Basically, the need for this application came from the fact of specific conditions that I have in my workflow. I use a laptop with a lot of different services and applications connected to the power source and monitors. In this condition I'd definitely like to have all my services and applications running.
+Basically the need for this app came from the fact of specific conditions that I have in my workflow. I use laptop with a lot of different services and apps, connected to the power source and monitors. In that condition I'd definitely like to have all of my services and apps running.
 
-But there's often a case where I unplug my laptop, or it's unplugged by other means (power shortages due to war), when that happens I definitely wouldn't want to do some manual work by stopping services I don't need when running on battery. And there are many of those, something like deskflow for sharing mouse and keyboard between multiple computers, home network file sharing syncthing which is meaningless when I'm not at home, or many-many others like picom, easyeffects, and any other thing that can be automatically disabled/enabled based on power conditions.
+But there's often a case when I'm disconnecting laptop from the power source, or it's being disconnected by other means (power shortages due to the war), when that happens I'd definitely would not want doing some hand work by stopping services that I don't need when running on battery. And there's many of that, something like deskflow for sharing mouse and keyboard between multiple computers, home network file-sharing syncthing which meaningless when I'm not at home, or many-many others like picom, easyeffects and any other things than can be auto disabled/re-enabled based on power conditions.
 
 Disabling and enabling such things manually is a pain in the ass, so it's definitely better to have some minimal automation for it. Based on the first-glance research, something similar can [be achieved](https://superuser.com/q/1417292) through writing udev rules:
 
@@ -55,8 +56,8 @@ config.toml
 
 ```toml
 system_services_to_stop = [
-    "fwupd",
-    "syncthing",
+    "fwupd"
+    "syncthing"
     "bpftune"
 ]
 user_services_to_stop = [
@@ -70,10 +71,10 @@ apps_to_stop = [
     "easyeffects"
 ]
 commands_unplugged = [
-    "bluetoothctl power off"
+  "bluetoothctl power off"
 ]
 commands_plugged = [
-    "bluetoothctl power on"
+  "bluetoothctl power on"
 ]
 username = "leniviy"
 ```
@@ -109,5 +110,4 @@ or as I'm doing that with nix:
     };
   };
 }
-
 ```

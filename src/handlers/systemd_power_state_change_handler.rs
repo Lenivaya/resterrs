@@ -21,26 +21,26 @@ impl SystemdPowerStateChangeHandler {
 
     pub fn start_services(&self) {
         for service in &self.services {
-            log::info!("Starting service: {}", service);
+            tracing::info!("Starting service: {}", service);
             self.service_manager
                 .start(ServiceStartCtx {
                     service_name: service.clone(),
                 })
                 .unwrap_or_else(|e| {
-                    log::error!("Could not start service: {}", e);
+                    tracing::error!("Could not start service: {}", e);
                 })
         }
     }
 
     pub fn stop_services(&self) {
         for service in &self.services {
-            log::info!("Stopping service: {}", service);
+            tracing::info!("Stopping service: {}", service);
             self.service_manager
                 .stop(ServiceStopCtx {
                     service_name: service.clone(),
                 })
                 .unwrap_or_else(|e| {
-                    log::error!("Could not stop service: {}", e);
+                    tracing::error!("Could not stop service: {}", e);
                 })
         }
     }

@@ -1,5 +1,5 @@
 use anyhow::Result;
-use test_log::test;
+use tracing_test::traced_test;
 
 use resterrs::common::PowerState;
 use resterrs::handlers::systemd_power_state_change_handler::SystemdPowerStateChangeHandler;
@@ -8,6 +8,7 @@ use resterrs::traits::power_state_change_handler::PowerStateChangeHandler;
 use crate::common::mocks::MockSystemdServiceManager;
 
 #[test]
+#[traced_test]
 fn test_handle_plugged_state() -> Result<()> {
     let mut mock_service_manager = MockSystemdServiceManager::new();
 
@@ -24,6 +25,7 @@ fn test_handle_plugged_state() -> Result<()> {
 }
 
 #[test]
+#[traced_test]
 fn test_handle_unplugged_state() -> Result<()> {
     let mut mock_service_manager = MockSystemdServiceManager::new();
 

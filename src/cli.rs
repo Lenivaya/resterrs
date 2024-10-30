@@ -1,3 +1,4 @@
+use crate::logs::AppLoggingDriver;
 use clap::{Parser, ValueHint};
 
 #[derive(Parser, Debug)]
@@ -12,4 +13,13 @@ pub struct Arguments {
         short
     )]
     pub config_file: Option<String>,
+
+    /// Where logs must go
+    #[arg(
+        long,
+        value_enum,
+        value_name("LOG_DRIVER"),
+        default_value_t = AppLoggingDriver::Stdout
+    )]
+    pub log_driver: AppLoggingDriver,
 }

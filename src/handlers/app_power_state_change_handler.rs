@@ -44,7 +44,7 @@ impl AppPowerStateChangeHandler {
             })
             .for_each(|(pid, process)| {
                 if !process.kill() {
-                    log::error!("Failed to stop app {:?} (PID: {:?}", process.name(), pid);
+                    tracing::error!("Failed to stop app {:?} (PID: {:?}", process.name(), pid);
                 }
             });
     }

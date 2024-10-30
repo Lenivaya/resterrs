@@ -3,7 +3,6 @@ use std::path::PathBuf;
 
 use crate::cli::Arguments;
 use lazy_static::lazy_static;
-use log::info;
 use serde::{Deserialize, Serialize};
 
 const APP_NAME: &str = env!("CARGO_PKG_NAME");
@@ -45,13 +44,14 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: Arguments) -> Self {
+    pub fn new(args: &Arguments) -> Self {
         let config_path = args
             .config_file
+            .as_ref()
             .map(PathBuf::from)
             .unwrap_or_else(|| CONFIG_FILE.to_path_buf());
 
-        info!("Using config file: {:?}", config_path);
+        tracing::info!("Using config file: {:?}", config_path);
 
         let contents = fs::read_to_string(&config_path)
             .unwrap_or_else(|_| panic!("Could not read config file: {:?}", config_path));

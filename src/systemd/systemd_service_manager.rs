@@ -1,5 +1,4 @@
 use crate::traits::service_manager::{ServiceManager, ServiceStartCtx, ServiceStopCtx};
-use log::info;
 use std::io;
 use std::process::{Command, Stdio};
 
@@ -58,7 +57,7 @@ fn systemctl(cmd: &str, label: &str, user: Option<&String>) -> io::Result<()> {
 
         command.arg(cmd).arg(label);
 
-        info!("Running systemctl command: {:?}", command);
+        tracing::info!("Running systemctl command: {:?}", command);
 
         command.output()?
     };

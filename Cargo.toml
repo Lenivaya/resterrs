@@ -4,23 +4,23 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-udev = { version = "0.9.0", features = ["hwdb", "mio10"] }
+udev = { version = "0.9.1", features = ["hwdb", "mio10"] }
 mio = { version = "1.0.2", features = ["os-poll"] }
 anyhow = "1.0.91"
 toml = "0.8.19"
-serde = { version = "1.0.204", features = ["derive"] }
+serde = { version = "1.0.214", features = ["derive"] }
 dirs = "5.0.1"
 lazy_static = "1.5.0"
-log = "0.4.22"
-env_logger = "0.11.5"
 clap = { version = "4.5", features = ["derive", "unicode", "wrap_help"] }
 sysinfo = "0.32.0"
 run_script = "0.11.0"
+tracing = "0.1.40"
+tracing-journald = "0.3.0"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 
 [dev-dependencies]
 mockall = "0.13.0"
-test-log = "0.2.16"
-env_logger = "0.11.5"
+tracing-test = "0.2.5"
 anyhow = "1.0.91"
 rand = "0.8.5"
 
