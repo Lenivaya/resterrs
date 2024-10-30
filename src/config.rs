@@ -1,19 +1,16 @@
-use std::fs;
 use std::path::PathBuf;
+use std::{fs, sync::LazyLock};
 
 use crate::cli::Arguments;
-use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 
 const APP_NAME: &str = env!("CARGO_PKG_NAME");
-lazy_static! {
-    pub static ref CONFIG_FOLDER: PathBuf = {
-        let mut path = dirs::config_dir().expect("Could not find config directory");
-        path.extend([APP_NAME]);
-        path
-    };
-    pub static ref CONFIG_FILE: PathBuf = CONFIG_FOLDER.join("config.toml");
-}
+pub static CONFIG_FOLDER: LazyLock<PathBuf> = LazyLock::new(|| {
+    let mut path = dirs::config_dir().expect("Could not find config directory");
+    path.extend([APP_NAME]);
+    path
+});
+pub static CONFIG_FILE: LazyLock<PathBuf> = LazyLock::new(|| CONFIG_FOLDER.join("config.toml"));
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Config {
