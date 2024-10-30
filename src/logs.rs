@@ -19,7 +19,8 @@ impl<'a> AppLogging<'a> {
         let env_filter = EnvFilter::from_default_env();
         let subscriber = Registry::default().with(env_filter).with(layer);
 
-        set_global_default(subscriber).expect("Failed to set global default subscriber");
+        set_global_default(subscriber)
+            .expect("Failed to set global default subscriber for tracing");
         Ok(())
     }
 }

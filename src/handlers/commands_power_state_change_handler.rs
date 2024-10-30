@@ -1,7 +1,8 @@
-use crate::common::PowerState;
+use crate::command_runner::run_command;
+use crate::common::catch_unwind_silent;
+use crate::power_state::PowerState;
 use crate::traits::power_state_change_handler::PowerStateChangeHandler;
-use anyhow::{Context, Result};
-use run_script::run_script;
+use anyhow::Result;
 
 #[derive(Debug, Clone, Default)]
 pub struct CommandsPowerStateChangeHandler {
@@ -24,10 +25,8 @@ impl CommandsPowerStateChangeHandler {
         if let Some(commands) = commands {
             for command in commands {
                 tracing::info!("Running command: {}", command);
-                if let Err(e) = run_script!(command)
-                    .with_context(|| format!("Failed to run command: {}", command))
-                {
-                    tracing::error!("{}", e);
+                if let Err(e) = catch_unwind_silent(|| run_command(command)) {
+                    tracing::error!("Failed to execute command: {:?}", e);
                 }
             }
         }

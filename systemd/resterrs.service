@@ -3,7 +3,7 @@ Description=Resterrs Service Manager
 After=default.target
 
 [Service]
-ExecStart=target/debug/resterrs
+ExecStart=/usr/bin/resterrs --log-driver journald -c /path/to/config.toml
 Restart=always
 User=root
 

@@ -1,4 +1,4 @@
-use crate::common::PowerState;
+use crate::power_state::PowerState;
 use crate::traits::power_state_change_handler::PowerStateChangeHandler;
 use crate::traits::service_manager::{ServiceManager, ServiceStartCtx, ServiceStopCtx};
 use anyhow::Result;

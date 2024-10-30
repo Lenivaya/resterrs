@@ -6,13 +6,12 @@ edition = "2021"
 [dependencies]
 udev = { version = "0.9.1", features = ["hwdb", "mio10"] }
 mio = { version = "1.0.2", features = ["os-poll"] }
-anyhow = "1.0.91"
+anyhow = "1.0.93"
 toml = "0.8.19"
 serde = { version = "1.0.214", features = ["derive"] }
 dirs = "5.0.1"
 clap = { version = "4.5", features = ["derive", "unicode", "wrap_help"] }
 sysinfo = "0.32.0"
-run_script = "0.11.0"
 tracing = "0.1.40"
 tracing-journald = "0.3.0"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
@@ -20,6 +19,6 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 [dev-dependencies]
 mockall = "0.13.0"
 tracing-test = "0.2.5"
-anyhow = "1.0.91"
+anyhow = "1.0.93"
 rand = "0.8.5"
 

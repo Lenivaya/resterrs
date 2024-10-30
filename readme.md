@@ -107,8 +107,10 @@ or as I'm doing that with nix:
       ];
       username = config.user.name;
     };
+    extraServicePackages = with pkgs; [
+      bluez-experimental
+    ];
   };
 }
-
 ```
 

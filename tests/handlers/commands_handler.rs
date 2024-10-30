@@ -3,7 +3,7 @@ use std::fs::{self};
 use std::path::PathBuf;
 use std::time::Duration;
 
-use resterrs::common::PowerState;
+use resterrs::power_state::PowerState;
 use resterrs::handlers::commands_power_state_change_handler::CommandsPowerStateChangeHandler;
 use resterrs::traits::power_state_change_handler::PowerStateChangeHandler;
 use tracing_test::traced_test;

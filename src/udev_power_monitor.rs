@@ -1,4 +1,4 @@
-use crate::common::PowerState;
+use crate::power_state::PowerState;
 use crate::power_state_change_manager::PowerStateChangeManager;
 use crate::power_state_tracker::PowerStateTracker;
 use anyhow::{Context, Result};
@@ -39,7 +39,10 @@ impl UdevPowerMonitor {
         tracing::info!("Listening for power supply udev events...");
 
         loop {
-            poll.poll(&mut events, Some(Duration::from_secs(1)))?;
+            if let Err(e) = poll.poll(&mut events, Some(Duration::from_secs(1))) {
+                tracing::error!("Failed to poll for events: {:?}", e);
+                continue;
+            };
 
             for event in events.iter() {
                 if let UDEV = event.token() {
