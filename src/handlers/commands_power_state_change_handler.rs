@@ -23,11 +23,11 @@ impl CommandsPowerStateChangeHandler {
     pub fn run_commands(&self, commands: &Option<Vec<String>>) -> Result<()> {
         if let Some(commands) = commands {
             for command in commands {
-                log::info!("Running command: {}", command);
+                tracing::info!("Running command: {}", command);
                 if let Err(e) = run_script!(command)
                     .with_context(|| format!("Failed to run command: {}", command))
                 {
-                    log::error!("{}", e);
+                    tracing::error!("{}", e);
                 }
             }
         }

@@ -2,11 +2,11 @@ use anyhow::Result;
 use std::fs::{self};
 use std::path::PathBuf;
 use std::time::Duration;
-use test_log::test;
 
 use resterrs::common::PowerState;
 use resterrs::handlers::commands_power_state_change_handler::CommandsPowerStateChangeHandler;
 use resterrs::traits::power_state_change_handler::PowerStateChangeHandler;
+use tracing_test::traced_test;
 
 struct TestMarkerFile {
     path: PathBuf,
@@ -37,6 +37,7 @@ impl Drop for TestMarkerFile {
 }
 
 #[test]
+#[traced_test]
 fn test_commands_handler_unplugged_executes_commands() -> Result<()> {
     let marker = TestMarkerFile::new("unplugged");
     marker.delete()?; // Ensure clean state
@@ -77,6 +78,7 @@ fn test_commands_handler_plugged_executes_commands() -> Result<()> {
 }
 
 #[test]
+#[traced_test]
 fn test_commands_handler_executes_nothing_when_no_commands() -> Result<()> {
     let marker_unplugged = TestMarkerFile::new("no_command_unplugged");
     let marker_plugged = TestMarkerFile::new("no_command_plugged");
@@ -105,6 +107,7 @@ fn test_commands_handler_executes_nothing_when_no_commands() -> Result<()> {
 }
 
 #[test]
+#[traced_test]
 fn test_commands_handler_handles_multiple_commands() -> Result<()> {
     let marker1 = TestMarkerFile::new("multi_1");
     let marker2 = TestMarkerFile::new("multi_2");
@@ -135,6 +138,7 @@ fn test_commands_handler_handles_multiple_commands() -> Result<()> {
 }
 
 #[test]
+#[traced_test]
 fn test_commands_handler_continues_on_failed_command() -> Result<()> {
     let marker = TestMarkerFile::new("after_fail");
     marker.delete()?;

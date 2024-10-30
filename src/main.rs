@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use clap::Parser;
 use cli::Arguments;
 use resterrs::config::Config;
@@ -6,15 +6,19 @@ use resterrs::handlers::{
     app_power_state_change_handler, commands_power_state_change_handler,
     systemd_power_state_change_handler,
 };
+use resterrs::logs::AppLogging;
 use resterrs::power_state_change_manager::PowerStateChangeManager;
 use resterrs::systemd::systemd_service_manager::SystemdServiceManager;
 use resterrs::{cli, udev_power_monitor};
 use std::sync::Arc;
 
 fn main() -> Result<()> {
-    env_logger::init();
     let args = Arguments::parse();
-    let config = Config::new(args);
+    let config = Config::new(&args);
+
+    AppLogging::new(&args.log_driver)
+        .init()
+        .context("Failed to initialize logging")?;
 
     let mut manager = PowerStateChangeManager::new();
     manager

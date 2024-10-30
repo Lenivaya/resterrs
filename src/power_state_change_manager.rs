@@ -35,7 +35,7 @@ impl PowerStateChangeManager {
             let power_state = power_state.clone();
             thread::spawn(move || {
                 if let Err(e) = handler.handle(&power_state) {
-                    eprintln!("Error handling power state change: {:?}", e);
+                    tracing::error!("Error handling power state change: {:?}", e);
                 }
             });
         }

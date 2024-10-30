@@ -2,7 +2,6 @@ use crate::common::PowerState;
 use crate::power_state_change_manager::PowerStateChangeManager;
 use crate::power_state_tracker::PowerStateTracker;
 use anyhow::{Context, Result};
-use log::info;
 use mio::{Events, Interest, Poll, Token};
 use std::sync::Mutex;
 use std::time::Duration;
@@ -37,7 +36,7 @@ impl UdevPowerMonitor {
         poll.registry()
             .register(&mut socket, UDEV, Interest::READABLE)?;
 
-        info!("Listening for power supply udev events...");
+        tracing::info!("Listening for power supply udev events...");
 
         loop {
             poll.poll(&mut events, Some(Duration::from_secs(1)))?;
@@ -62,12 +61,12 @@ impl UdevPowerMonitor {
             .should_handle(&power_state)
         {
             match power_state {
-                PowerState::Plugged => info!("Power plugged in!"),
-                PowerState::Unplugged => info!("Power unplugged!"),
+                PowerState::Plugged => tracing::info!("Power plugged in!"),
+                PowerState::Unplugged => tracing::info!("Power unplugged!"),
             }
 
             if let Err(e) = self.power_state_change_manager.handle(power_state) {
-                eprintln!("Error handling power state change: {:?}", e);
+                tracing::error!("Error handling power state change: {:?}", e);
             }
         }
     }
