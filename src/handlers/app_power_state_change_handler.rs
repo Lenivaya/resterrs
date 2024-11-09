@@ -1,4 +1,4 @@
-use crate::common::PowerState;
+use crate::power_state::PowerState;
 use crate::traits::power_state_change_handler::PowerStateChangeHandler;
 use anyhow::Result;
 use std::{

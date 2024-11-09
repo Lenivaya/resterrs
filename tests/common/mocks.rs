@@ -2,7 +2,7 @@ use anyhow::Result;
 use mockall::mock;
 use std::io;
 
-use resterrs::common::PowerState;
+use resterrs::power_state::PowerState;
 use resterrs::traits::power_state_change_handler::PowerStateChangeHandler;
 use resterrs::traits::service_manager::{ServiceManager, ServiceStartCtx, ServiceStopCtx};
 

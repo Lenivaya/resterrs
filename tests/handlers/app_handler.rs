@@ -1,7 +1,7 @@
 use anyhow::Result;
 use tracing_test::traced_test;
 
-use resterrs::common::PowerState;
+use resterrs::power_state::PowerState;
 use resterrs::handlers::app_power_state_change_handler::AppPowerStateChangeHandler;
 use resterrs::traits::power_state_change_handler::PowerStateChangeHandler;
 

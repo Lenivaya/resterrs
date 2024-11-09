@@ -1,4 +1,4 @@
-use resterrs::common::PowerState;
+use resterrs::power_state::PowerState;
 use resterrs::power_state_tracker::PowerStateTracker;
 use tracing_test::traced_test;
 

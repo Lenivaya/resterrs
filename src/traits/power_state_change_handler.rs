@@ -1,4 +1,4 @@
-use crate::common::PowerState;
+use crate::power_state::PowerState;
 use anyhow::Result;
 
 pub trait PowerStateChangeHandler: Send + Sync {

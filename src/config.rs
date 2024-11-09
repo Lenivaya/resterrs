@@ -50,8 +50,10 @@ impl Config {
 
         tracing::info!("Using config file: {:?}", config_path);
 
-        let contents = fs::read_to_string(&config_path)
-            .unwrap_or_else(|_| panic!("Could not read config file: {:?}", config_path));
+        let contents = fs::read_to_string(&config_path).unwrap_or_else(|_| {
+            tracing::warn!("Could not read config file: {:?}", config_path);
+            String::new()
+        });
 
         toml::from_str(&contents).expect("Could not parse config file")
     }

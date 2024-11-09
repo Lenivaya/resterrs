@@ -1,5 +1,6 @@
-use crate::common::PowerState;
+use crate::power_state::PowerState;
 
+/// PowerStateTracker is used to track the last power state and determine if the new state should be handled.
 #[derive(Debug, PartialEq, Clone, Default)]
 pub struct PowerStateTracker {
     last_state: Option<PowerState>,

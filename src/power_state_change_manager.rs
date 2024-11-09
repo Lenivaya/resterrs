@@ -1,4 +1,4 @@
-use crate::common::PowerState;
+use crate::power_state::PowerState;
 use crate::traits::power_state_change_handler::PowerStateChangeHandler;
 use anyhow::Result;
 use std::sync::Arc;
@@ -31,7 +31,7 @@ impl PowerStateChangeManager {
 
     pub fn handle(&self, power_state: PowerState) -> Result<()> {
         for handler in self.handlers.iter() {
-            let handler = Arc::clone(handler);
+            let handler = handler.clone();
             let power_state = power_state.clone();
             thread::spawn(move || {
                 if let Err(e) = handler.handle(&power_state) {
