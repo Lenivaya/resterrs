@@ -4,7 +4,7 @@
 <div align="center">
 
 ![CI](https://github.com/Lenivaya/qrrs/workflows/CI/badge.svg)
-[![License: MIT](https://img.shields.io/github/license/lenivaya/resterrs)](./LICENSE)
+[![License](https://img.shields.io/github/license/lenivaya/resterrs)](./LICENSE)
 
 ![monkey sleeping](https://github.com/user-attachments/assets/1fd2f02b-a229-48f1-9827-2a389b9c1ef5)
 
@@ -14,42 +14,87 @@
 <summary>Table of contents</summary>
 
 - [Use cases](#use-cases)
-- [Features](#features)
+- [Use cases explanation](#use-cases-explanation)
 - [Usage](#usage)
+    - [NixOS](#nixos)
 - [Configuration](#configuration)
-- [License](#license)
+- [Configuration examples](#configuration-examples)
 
 </details>
 
 # Use cases
 
-**_A good [config example](#configuration-example) is worth a thousand of words._**
+- [x] Managing of user services
+    - automatic start/stop of user services based on power conditions
+- [x] Managing of system services
+    - automatic start/stop of system services based on power conditions
+- [x] Managing of user apps
+    - automatic kill of apps based on power conditions
+- [x] Managing of arbitrary commands
+    - running commands based on power conditions
 
-Basically, the need for this application came from the fact of specific conditions that I have in my workflow. I use a laptop with a lot of different services and applications connected to the power source and monitors. In this condition I'd definitely like to have all my services and applications running.
+_By using word services I mean systemd services_
 
-But there's often a case where I unplug my laptop, or it's unplugged by other means (power shortages due to war), when that happens I definitely wouldn't want to do some manual work by stopping services I don't need when running on battery. And there are many of those, something like deskflow for sharing mouse and keyboard between multiple computers, home network file sharing syncthing which is meaningless when I'm not at home, or many-many others like picom, easyeffects, and any other thing that can be automatically disabled/enabled based on power conditions.
+## Use cases explanation
 
-Disabling and enabling such things manually is a pain in the ass, so it's definitely better to have some minimal automation for it. Based on the first-glance research, something similar can [be achieved](https://superuser.com/q/1417292) through writing udev rules:
+**_A good [config example](#configuration-examples) is worth a thousand words._**
+
+This application was born from my specific workflow needs. I use a laptop with multiple services and applications that are connected to external monitors and power. In this setup, I want everything running at full capacity.
+
+However, there's often a case where I unplug my laptop, or it's unplugged by other means (power shortages due to war), when that happens I definitely wouldn't want to do manual work stopping services I don't need while running on battery. Some examples include:
+
+- **deskflow**: For sharing mouse/keyboard between computers
+- **syncthing**: For home network file sharing (meaningless when not at home)
+- **picom**: For desktop compositing and pretty shadows/animations
+- **easyeffects**: For audio processing
+- And any other services that can be automatically managed based on power conditions
+
+While you can manage these services manually, automation is far more efficient. The traditional approach uses udev rules:
 
 ```shell
 SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/bin/killcompton.sh"
 SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/bin/startcompton.sh"
 ```
 
-But that's also too cumbersome and not quite user-friendly nor extensible. So let's get our hands dirty and write some things on rust.
+However, this solution is cumbersome to maintain and lacks user-friendly configuration options. So let's get our hands dirty and write some things on rust.
 
-# Features
+# Usage
 
-- [x] Managing of user services
-- [x] Managing of system services
-- [x] Managing of user apps
-- [x] Managing of arbitrary commands
+## NixOS
 
-_By using word services I mean systemd services_
+To start using this service on NixOS, you must add this repo as input to your flake:
+
+```nix
+{
+  inputs = {
+    resterrs = {
+      url = "github:Lenivaya/resterrs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+  # ...
+}
+
+```
+
+then import nixos module from this flake:
+
+```nix
+{
+  imports = [
+    inputs.resterrs.nixosModules.default
+  ];
+}
+
+```
+
+and then you can configure it according to the [configuration in nix section](#configuration-in-nix)
 
 # Configuration
 
 ## Configuration examples
+
+### Configuration in TOML
 
 config.toml
 
@@ -78,11 +123,12 @@ commands_plugged = [
 username = "leniviy"
 ```
 
-or as I'm doing that with nix:
+### Configuration in Nix
 
 ```nix
 {
-  services.resterrs = enabled // {
+  services.resterrs = {
+    enable = true;
     settings = {
       system_services_to_stop = [
         "fwupd"
@@ -108,9 +154,9 @@ or as I'm doing that with nix:
       username = config.user.name;
     };
     extraServicePackages = with pkgs; [
-      bluez-experimental
+      bluez
     ];
   };
 }
-```
 
+```
