@@ -19,30 +19,38 @@ impl SystemdPowerStateChangeHandler {
         }
     }
 
-    pub fn start_services(&self) {
-        for service in &self.services {
-            tracing::info!("Starting service: {}", service);
-            self.service_manager
-                .start(ServiceStartCtx {
-                    service_name: service.clone(),
-                })
-                .unwrap_or_else(|e| {
-                    tracing::error!("Could not start service: {}", e);
-                })
-        }
+    fn start_services(&self) {
+        self.services
+            .iter()
+            .for_each(|service| self.start_service(service));
     }
 
-    pub fn stop_services(&self) {
-        for service in &self.services {
-            tracing::info!("Stopping service: {}", service);
-            self.service_manager
-                .stop(ServiceStopCtx {
-                    service_name: service.clone(),
-                })
-                .unwrap_or_else(|e| {
-                    tracing::error!("Could not stop service: {}", e);
-                })
-        }
+    fn stop_services(&self) {
+        self.services
+            .iter()
+            .for_each(|service| self.stop_service(service));
+    }
+
+    fn start_service(&self, service: &str) {
+        tracing::info!("Starting service: {}", service);
+        self.service_manager
+            .start(ServiceStartCtx {
+                service_name: service.to_string(),
+            })
+            .unwrap_or_else(|e| {
+                tracing::error!("Could not start service: {}", e);
+            })
+    }
+
+    fn stop_service(&self, service: &str) {
+        tracing::info!("Stopping service: {}", service);
+        self.service_manager
+            .stop(ServiceStopCtx {
+                service_name: service.to_string(),
+            })
+            .unwrap_or_else(|e| {
+                tracing::error!("Could not stop service: {}", e);
+            })
     }
 }
 

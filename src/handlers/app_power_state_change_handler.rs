@@ -30,23 +30,24 @@ impl AppPowerStateChangeHandler {
     }
 
     fn stop_apps(&self) {
-        self.system.lock().unwrap().refresh_all();
-
-        self.system
-            .lock()
-            .expect("Failed to lock system when fetching processes for stopping app")
-            .processes()
-            .iter()
-            .filter(|(_, process)| {
-                self.managed_apps
-                    .iter()
-                    .any(|app| self.should_stop_process(process, app))
-            })
-            .for_each(|(pid, process)| {
-                if !process.kill() {
-                    tracing::error!("Failed to stop app {:?} (PID: {:?}", process.name(), pid);
-                }
-            });
+        if let Ok(mut system) = self.system.lock() {
+            system.refresh_all();
+            system
+                .processes()
+                .iter()
+                .filter(|(_, process)| {
+                    self.managed_apps
+                        .iter()
+                        .any(|app| self.should_stop_process(process, app))
+                })
+                .for_each(|(pid, process)| {
+                    if !process.kill() {
+                        tracing::error!("Failed to stop app {:?} (PID: {:?}", process.name(), pid);
+                    }
+                });
+        } else {
+            tracing::error!("Failed to lock system mutex for stopping apps");
+        }
     }
 
     fn should_stop_process(&self, process: &Process, app: &str) -> bool {

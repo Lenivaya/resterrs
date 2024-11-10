@@ -3,6 +3,13 @@ name = "resterrs"
 version = "0.1.0"
 edition = "2021"
 
+[profile.release]
+debug = false
+lto = "fat"
+strip = true
+opt-level = "z"
+codegen-units = 1
+
 [dependencies]
 udev = { version = "0.9.1", features = ["hwdb", "mio10"] }
 mio = { version = "1.0.2", features = ["os-poll"] }
