@@ -30,14 +30,13 @@ in
         Additional packages to be installed with resterrs systemd unit.
         (needed because systemd doesn't expose user PATH to it's units)
       '';
-      serviceLogLevel = mkOption {
-        type = types.str;
-        default = "error,info";
-        example = "error,info,debug,trace";
-        description = "Rust log level for the resterrs service";
-      };
     };
-
+    serviceLogLevel = mkOption {
+      type = types.str;
+      default = "error,info";
+      example = "error,info,debug,trace";
+      description = "Rust log level for the resterrs service";
+    };
     settings = mkOption {
       type = toTOML.type;
       default = { };
