@@ -1,8 +1,8 @@
 use anyhow::Result;
 use tracing_test::traced_test;
 
-use resterrs::power_state::PowerState;
 use resterrs::handlers::systemd_power_state_change_handler::SystemdPowerStateChangeHandler;
+use resterrs::power_state::PowerState;
 use resterrs::traits::power_state_change_handler::PowerStateChangeHandler;
 
 use crate::common::mocks::MockSystemdServiceManager;

@@ -1,3 +1,4 @@
+pub mod app;
 pub mod cli;
 pub mod command_runner;
 pub mod common;
@@ -10,4 +11,3 @@ pub mod power_state_tracker;
 pub mod systemd;
 pub mod traits;
 pub mod udev_power_monitor;
-pub mod app;

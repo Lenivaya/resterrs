@@ -16,7 +16,7 @@
 - [Use cases](#use-cases)
 - [Use cases explanation](#use-cases-explanation)
 - [Usage](#usage)
-    - [NixOS](#nixos)
+  - [NixOS](#nixos)
 - [Configuration](#configuration)
 - [Configuration examples](#configuration-examples)
 
@@ -25,13 +25,13 @@
 # Use cases
 
 - [x] Managing of user services
-    - automatic start/stop of user services based on power conditions
+  - automatic start/stop of user services based on power conditions
 - [x] Managing of system services
-    - automatic start/stop of system services based on power conditions
+  - automatic start/stop of system services based on power conditions
 - [x] Managing of user apps
-    - automatic kill of apps based on power conditions
+  - automatic kill of apps based on power conditions
 - [x] Managing of arbitrary commands
-    - running commands based on power conditions
+  - running commands based on power conditions
 
 _By using word services I mean systemd services_
 

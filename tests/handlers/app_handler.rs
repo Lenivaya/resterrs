@@ -1,8 +1,8 @@
 use anyhow::Result;
 use tracing_test::traced_test;
 
-use resterrs::power_state::PowerState;
 use resterrs::handlers::app_power_state_change_handler::AppPowerStateChangeHandler;
+use resterrs::power_state::PowerState;
 use resterrs::traits::power_state_change_handler::PowerStateChangeHandler;
 
 use crate::common::test_process::TestProcess;
