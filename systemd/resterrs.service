@@ -5,7 +5,12 @@ After=default.target
 [Service]
 ExecStart=/usr/bin/resterrs --log-driver journald -c /path/to/config.toml
 Restart=always
+RestartSec=1
 User=root
+DynamicUser=true
+StateDirectory=resterrs
+ConfigurationDirectory=resterrs
+RuntimeDirectory=resterrs
 
 [Install]
 WantedBy=multi-user.target

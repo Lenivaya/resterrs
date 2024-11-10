@@ -78,7 +78,7 @@ in
         description = "Resterrs Service, rests your apps and services when you plug or unplug your device";
         wantedBy = [ "multi-user.target" ];
         path = cfg.extraServicePackages;
-        script = "${getExe' cfg.package "resterrs"} --log-driver  journald -c ${settings'}";
+        script = "${getExe' cfg.package "resterrs"} --log-driver journald -c ${settings'}";
         environment = {
           RUST_LOG = cfg.serviceLogLevel;
         };
