@@ -49,7 +49,7 @@ However, there's often a case where I unplug my laptop, or it's unplugged by oth
 - **easyeffects**: For audio processing
 - And any other services that can be automatically managed based on power conditions
 
-While you can manage these services manually, automation is far more efficient. The traditional approach uses udev rules:
+Disabling and enabling such things manually is a pain in the ass, so it's definitely better to have some minimal automation for it. Based on the first-glance research, something similar can [be achieved](https://superuser.com/q/1417292) through writing udev rules:
 
 ```shell
 SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/bin/killcompton.sh"
