@@ -60,10 +60,12 @@ impl UdevPowerMonitor {
     fn filter_event(&self, event: &udev::Event) -> bool {
         let sysname = event.sysname().to_str().unwrap_or_else(|| "");
 
-        sysname.starts_with("BAT") || sysname.starts_with("AC") || self.filter_properties(event)
+        sysname.starts_with("BAT")
+            || sysname.starts_with("AC")
+            || self.filter_event_properties(event)
     }
 
-    fn filter_properties(&self, event: &udev::Event) -> bool {
+    fn filter_event_properties(&self, event: &udev::Event) -> bool {
         event
             .properties()
             .into_iter()
