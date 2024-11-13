@@ -66,9 +66,7 @@ impl UdevPowerMonitor {
     }
 
     fn filter_event_properties(&self, event: &udev::Event) -> bool {
-        event
-            .properties()
-            .any(|p| self.filter_event_property(&p))
+        event.properties().any(|p| self.filter_event_property(&p))
     }
 
     fn filter_event_property(&self, property: &udev::Entry) -> bool {
