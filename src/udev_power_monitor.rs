@@ -58,7 +58,7 @@ impl UdevPowerMonitor {
 
     /// Filters out events that are not related to battery directly
     fn filter_event(&self, event: &udev::Event) -> bool {
-        let sysname = event.sysname().to_str().unwrap_or_else(|| "");
+        let sysname = event.sysname().to_str().unwrap_or("");
 
         sysname.starts_with("BAT")
             || sysname.starts_with("AC")
@@ -68,7 +68,6 @@ impl UdevPowerMonitor {
     fn filter_event_properties(&self, event: &udev::Event) -> bool {
         event
             .properties()
-            .into_iter()
             .any(|p| self.filter_event_property(&p))
     }
 
