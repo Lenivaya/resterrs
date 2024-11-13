@@ -47,11 +47,33 @@ impl UdevPowerMonitor {
             for event in events.iter() {
                 if let UDEV = event.token() {
                     if let Some(udev_event) = socket.iter().next() {
-                        self.handle_event(&udev_event);
+                        if self.filter_event(&udev_event) {
+                            self.handle_event(&udev_event);
+                        }
                     }
                 }
             }
         }
+    }
+
+    /// Filters out events that are not related to battery directly
+    fn filter_event(&self, event: &udev::Event) -> bool {
+        let sysname = event.sysname().to_str().unwrap_or("");
+
+        sysname.starts_with("BAT")
+            || sysname.starts_with("AC")
+            || self.filter_event_properties(event)
+    }
+
+    fn filter_event_properties(&self, event: &udev::Event) -> bool {
+        event
+            .properties()
+            .any(|p| self.filter_event_property(&p))
+    }
+
+    fn filter_event_property(&self, property: &udev::Entry) -> bool {
+        (property.name() == "POWER_SUPPLY_TYPE" && property.value() == "Battery")
+            || (property.name() == "POWER_SUPPLY_NAME" && property.value() == "AC")
     }
 
     fn handle_event(&self, event: &udev::Event) {
